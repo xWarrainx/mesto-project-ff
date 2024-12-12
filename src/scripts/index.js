@@ -1,63 +1,44 @@
 import { initialCards } from './cards.js';
 import { like, createCard, deleteCard} from '../components/card.js';
-import { showPopup, handleCloseByEsc, handleCloseBtn, handleCloseOverlay, closePopup } from '../components/modal.js';
+import { showPopup, handleCloseByEsc, handleCloseOverlay, closePopup } from '../components/modal.js';
 import '../pages/index.css';
 
-const popupTypeImage = document.querySelector('.popup_type_image');
-
-// Открытие попапа с картинкой
-function showImage(dataCard) {
-    document.querySelector('.popup__image').src = dataCard.link;
-    document.querySelector('.popup__image').alt = dataCard.name;
-    document.querySelector('.popup__caption').textContent = document.querySelector('.card__title').textContent;
-        showPopup(popupTypeImage);
-}
-// @todo: Темплейт карточки
-
-
-// @todo: DOM узлы
-const cardsContainer = document.querySelector('.places__list');
-
-// @todo: Вывести карточки на страницу (forEach)
-initialCards.forEach(initialCard => {
-    const cardElement = createCard(initialCard, like, showImage, deleteCard);
-    cardsContainer.append(cardElement);
-});
-
 // Определяем переменные
+const popupTypeImage = document.querySelector('.popup_type_image');
+const buttonsClose  = document.querySelectorAll('.popup__close');
+const popupImage = document.querySelector('.popup__image');
+const popupCaption = document.querySelector('.popup__caption');
+const cardsContainer = document.querySelector('.places__list');
 const profileBtn = document.querySelector('.profile__edit-button');
 const addCardBtn = document.querySelector('.profile__add-button');
 const popup = document.querySelector('.popup');
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupAddCard = document.querySelector('.popup_type_new-card');
-
-// Присваиваем popup класс popup_is-animated для анимации открытия
-popup.classList.add('popup_is-animated');
-
-// Вешаем слушатели на кнопки открытия
-profileBtn.addEventListener('click', () => {
-    getUserInfo();
-    showPopup(popupEdit);
-});
-
-addCardBtn.addEventListener('click', () => {
-    showPopup(popupAddCard);
-});
-
 //--------------------------Работа с формами-------------------------------------------
 const formElement = document.forms.edit_profile;
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
-
 const inputName = formElement.elements.name;
 const inputDescription = formElement.elements.description;
+//--------------------------------Добавление новой карточки--------------------------------
+const formNewElement = document.forms.new_place;
 
-// Вешаем слушатель на кнопку сабмит
-formElement.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    setUserInfo();
-    closePopup(popup);
-});
+const placeName = formNewElement.elements.place_name;
+const placelink = formNewElement.elements.link;
+const newCard = [
+    {
+      name: '',
+      link: '',
+    },
+];
+
+// Открытие попапа с картинкой
+function showImage(dataCard) {
+    popupImage.src = dataCard.link;
+    popupImage.alt = dataCard.name;
+    popupCaption.textContent = document.querySelector('.card__title').textContent;
+        showPopup(popupTypeImage);
+}
 
 // Функция получения значения из профиля
 const getUserInfo = () => {
@@ -71,17 +52,35 @@ const setUserInfo = () => {
     profileDescription.textContent = inputDescription.value;
 }
 
-//--------------------------------Добавление новой карточки--------------------------------
-const formNewElement = document.forms.new_place;
+// @todo: Вывести карточки на страницу (forEach)
+initialCards.forEach(initialCard => {
+    const cardElement = createCard(initialCard, like, showImage, deleteCard);
+    cardsContainer.append(cardElement);
+});
 
-const placeName = formNewElement.elements.place_name;
-const placelink = formNewElement.elements.link;
-const newCard = [
-    {
-      name: '',
-      link: '',
-    },
-];
+buttonsClose.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const popup = btn.closest('.popup');
+        closePopup(popup);
+    });
+})
+
+// Вешаем слушатели на кнопки открытия
+profileBtn.addEventListener('click', () => {
+    getUserInfo();
+    showPopup(popupEdit);
+});
+
+addCardBtn.addEventListener('click', () => {
+    showPopup(popupAddCard);
+});
+
+// Вешаем слушатель на кнопку сабмит
+formElement.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    setUserInfo();
+    closePopup(popup);
+});
 
 // Вешаем слушатель на кнопку сабмит
 formNewElement.addEventListener('submit', (evt) => {
@@ -93,3 +92,6 @@ formNewElement.addEventListener('submit', (evt) => {
     closePopup(popupAddCard);   // закрываем попап
     evt.target.reset();     // сбрасываем значения в инпутах формы
 });
+
+// Присваиваем popup класс popup_is-animated для анимации открытия
+popup.classList.add('popup_is-animated');
