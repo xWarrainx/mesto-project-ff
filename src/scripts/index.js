@@ -12,6 +12,7 @@ const cardsContainer = document.querySelector('.places__list');
 const profileBtn = document.querySelector('.profile__edit-button');
 const addCardBtn = document.querySelector('.profile__add-button');
 const popup = document.querySelector('.popup');
+const popupList = document.querySelectorAll('.popup');
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupAddCard = document.querySelector('.popup_type_new-card');
 //--------------------------Работа с формами-------------------------------------------
@@ -36,7 +37,7 @@ const newCard = [
 function showImage(dataCard) {
     popupImage.src = dataCard.link;
     popupImage.alt = dataCard.name;
-    popupCaption.textContent = document.querySelector('.card__title').textContent;
+    popupCaption.textContent = dataCard.name;
         showPopup(popupTypeImage);
 }
 
@@ -94,4 +95,6 @@ formNewElement.addEventListener('submit', (evt) => {
 });
 
 // Присваиваем popup класс popup_is-animated для анимации открытия
+popupList.forEach(popup => {
 popup.classList.add('popup_is-animated');
+});
