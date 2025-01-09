@@ -5,7 +5,7 @@ import { getUserData, getAllCards, updateUserData, updateUserAvatar, createNewCa
 import '../pages/index.css';
 
 
-// Определяем переменные
+//Определяем переменные
 const popupTypeImage = document.querySelector('.popup_type_image');
 const buttonsClose  = document.querySelectorAll('.popup__close');
 const popupImage = document.querySelector('.popup__image');
@@ -36,7 +36,7 @@ const profileImageAvatar = document.querySelector('.profile__image-avatar');
 const profileAvatar = document.querySelector('.profile__image');
 const formAvatar = document.forms.avatar;
 const avatarUrlInput = formAvatar.elements.avatar_url;
-//---------------------------------Объявление validationConfig--------------------------------
+//---------------------------------Объявление validationConfig------------------------------
 const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -109,7 +109,7 @@ const like = (likeBtn, cardId, likeCounter) => {
     }
 }
 
-// Открытие попапа с картинкой
+//Открытие попапа с картинкой
 function showImage(dataCard) {
     popupImage.src = dataCard.link;
     popupImage.alt = dataCard.name;
@@ -117,7 +117,7 @@ function showImage(dataCard) {
         showPopup(popupTypeImage);
 }
 
-// Функция получения значения из профиля
+//Функция получения значения из профиля
 const getUserInfo = () => {
     inputName.value = profileTitle.textContent;
     inputDescription.value = profileDescription.textContent
@@ -143,6 +143,7 @@ profileAvatar.addEventListener('click', () => {
     showPopup(popupAvatar);
 });
 
+//Вешаем слушатель на кнопку сабмит добавления аватара
 formAvatar.addEventListener('submit', (evt) => {
     evt.preventDefault();
     changeButtonText(evt.target);
@@ -157,7 +158,7 @@ formAvatar.addEventListener('submit', (evt) => {
     closePopup(popupAvatar);
 });
 
-// Вешаем слушатели на кнопки открытия
+//Вешаем слушатели на кнопки открытия
 profileBtn.addEventListener('click', () => {
     getUserInfo();
     clearValidation(formEdit, validationConfig);
@@ -170,7 +171,7 @@ addCardBtn.addEventListener('click', () => {
     showPopup(popupAddCard);
 });
 
-// Вешаем слушатель на кнопку сабмит
+//Вешаем слушатель на кнопку сабмит
 formEdit.addEventListener('submit', (evt) => {
     evt.preventDefault();
     setUserInfo();
@@ -185,7 +186,7 @@ formEdit.addEventListener('submit', (evt) => {
     closePopup(popup);
 });
 
-// Вешаем слушатель на кнопку сабмит
+// Вешаем слушатель на кнопку сабмит добавления новой карточки
 formNewElement.addEventListener('submit', (evt) => {
     evt.preventDefault();       // убрали действия по умолчанию
     const newCard = {
