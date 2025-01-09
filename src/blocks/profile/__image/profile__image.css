@@ -1,12 +1,43 @@
 .profile__image {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 29px 0 0;
+}
+
+.profile__image:hover {
+  cursor: pointer;
+}
+
+.profile__image-avatar {
+  background-size: cover;
+  background-position: center;
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
+  transition: opacity 0.3s linear;
+}
+
+.profile__image-logo {
   background-size: cover;
   background-position: center;
-  margin: 0 29px 0 0;
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  opacity: 0;
+  transition: opacity 0.4s linear;
+}
+
+.profile__image:hover .profile__image-logo {
+  opacity: 1;
+}
+
+.profile__image:hover .profile__image-avatar {
+  opacity: 0.2;
 }
 
 @media screen and (max-width: 740px) {

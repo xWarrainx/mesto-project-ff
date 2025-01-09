@@ -4,6 +4,7 @@ export const showPopup = (popup) => {
     document.addEventListener('keydown', handleCloseByEsc);
     popup.addEventListener('click', handleCloseOverlay);
 }
+
 // Функция закрытие по клавише Esc
 export const handleCloseByEsc = (evt) => {
     if (evt.key === "Escape") {
@@ -14,9 +15,9 @@ export const handleCloseByEsc = (evt) => {
 
 // Фунция закрытия по клику на оверлей
 export const handleCloseOverlay = (evt) => {
-        if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-            closePopup(evt.currentTarget);
-        };
+    if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
+        closePopup(evt.currentTarget);
+    };
 }
 
 // Функция закрытия popup
