@@ -1,4 +1,4 @@
-import { createCard } from '../components/card.js';
+import { createCard, like, deleteCard } from '../components/card.js';
 import { showPopup, handleCloseByEsc, handleCloseOverlay, closePopup } from '../components/modal.js';
 import { showInputError, hideInputError, isValid, hasInvalidInput, toggleButtonState, setEventListeners, enableValidation, clearValidation } from '../components/validation.js';
 import { getUserData, getAllCards, updateUserData, updateUserAvatar, createNewCard, deleteCardAPI, putLikeAPI, deleteLikeAPI } from '../components/api.js';
@@ -55,8 +55,7 @@ Promise.all([
 ])
 .then(([userData, cards]) => {
     userId = userData._id;
-    profileTitle.textContent = userData.name;
-    profileDescription.textContent = userData.about
+    setUserInfo(userData.name, userData.about);
     profileImageAvatar.setAttribute('style', `background-image: url(${userData.avatar});`);
     cards.forEach(dataCard => {
         const cardElement = createCard(dataCard, like, showImage, userId, deleteCard);
@@ -67,46 +66,15 @@ Promise.all([
     console.error('Ошибка загрузки данных (данные пользователя, данные карточек):', error);
 })
 
-//Функция удаления карточки
-const deleteCard = (cardElement, dataCard) => {
-    cardElement.remove();
-    deleteCardAPI(dataCard)
-    .catch((error) => {
-        console.error('Ошибка загрузки данных (удаление карточки):', error);
-    });
-}
-
 //Функция замены текста кнопки Сохранение...
-const changeButtonText = (evt) => {
-    const submitButton = evt.querySelector('.popup__button');
-    if (submitButton.textContent === 'Сохранить') {
-        submitButton.textContent = 'Сохранение...'
-    } else {
-        submitButton.textContent = 'Сохранить'
+const changeButtonText = (element, text) => {
+    if (!element) return;
+    const submitButton = element.querySelector('.popup__button');
+    if (!submitButton) {
+        console.error('Кнопка не найдена');
+        return
     }
-}
-
-//Функция обработка лайка
-const like = (likeBtn, cardId, likeCounter) => {
-    if (likeBtn.classList.contains('card__like-button_is-active')) {
-        deleteLikeAPI(cardId)
-        .then((dataCard) => {
-            likeCounter.textContent = dataCard.likes.length;
-            likeBtn.classList.toggle('card__like-button_is-active');
-        })
-        .catch((error) => {
-            console.error('Ошибка загрузки данных (удаление лайка):', error);
-        })
-    } else {
-        putLikeAPI(cardId)
-        .then((dataCard) => {
-            likeCounter.textContent = dataCard.likes.length;
-            likeBtn.classList.toggle('card__like-button_is-active')
-        })
-        .catch((error) => {
-            console.error('Ошибка загрузки данных (установка лайка):', error);
-        });
-    }
+        submitButton.textContent = text;
 }
 
 //Открытие попапа с картинкой
@@ -124,14 +92,14 @@ const getUserInfo = () => {
 }
 
 // Функция получения измененных значений
-const setUserInfo = () => {
-    profileTitle.textContent = inputName.value;
-    profileDescription.textContent = inputDescription.value;
+const setUserInfo = (name, description) => {
+    profileTitle.textContent = name;
+    profileDescription.textContent = description;
 }
 
 buttonsClose.forEach(btn => {
+    const popup = btn.closest('.popup');
     btn.addEventListener('click', () => {
-        const popup = btn.closest('.popup');
         closePopup(popup);
     });
 });
@@ -146,16 +114,18 @@ profileAvatar.addEventListener('click', () => {
 //Вешаем слушатель на кнопку сабмит добавления аватара
 formAvatar.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    changeButtonText(evt.target);
+    changeButtonText(evt.target, "Сохранение...");
     profileImageAvatar.setAttribute('style', `background-image: url(${avatarUrlInput.value});`);
     updateUserAvatar(avatarUrlInput)
     .then(() => {
-        changeButtonText(evt.target);
+        closePopup(popupAvatar);
     })
     .catch((error) => {
         console.error('Ошибка загрузки данных (обновление аватара):', error);
+    })
+    .finally(() => {
+        changeButtonText(evt.target, "Сохранить");
     });
-    closePopup(popupAvatar);
 });
 
 //Вешаем слушатели на кнопки открытия
@@ -174,35 +144,40 @@ addCardBtn.addEventListener('click', () => {
 //Вешаем слушатель на кнопку сабмит
 formEdit.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    setUserInfo();
-    changeButtonText(evt.target);
+    changeButtonText(evt.target, "Сохранение...");
     updateUserData(inputName, inputDescription)
-    .then(() => {
-        changeButtonText(evt.target);
+    .then((data) => {
+        setUserInfo(data.name, data.about);
+        closePopup(popup);
     })
     .catch((error) => {
         console.error('Ошибка загрузки данных (обновление данный пользователя):', error);
+    })
+    .finally(() => {
+        changeButtonText(evt.target, "Сохранить");
     });
-    closePopup(popup);
 });
 
 // Вешаем слушатель на кнопку сабмит добавления новой карточки
 formNewElement.addEventListener('submit', (evt) => {
-    evt.preventDefault();       // убрали действия по умолчанию
+    evt.preventDefault();
     const newCard = {
           name: placeName.value,
           link: placelink.value
         }
-        changeButtonText(evt.target);
-    createNewCard(newCard).then((dataCard) => {
+        changeButtonText(evt.target, "Сохранение...");
+    createNewCard(newCard)
+    .then((dataCard) => {
         const cardElement = createCard(dataCard, like, showImage, userId, deleteCard);
         cardsContainer.prepend(cardElement);
-        changeButtonText(evt.target);
+        closePopup(popupAddCard);
     })
     .catch((error) => {
         console.error('Ошибка загрузки данных (данные новой карточки):', error);
     })
-    closePopup(popupAddCard);   // закрываем попап
+    .finally(() => {
+        changeButtonText(evt.target, "Сохранить");
+    });
     evt.target.reset();     // сбрасываем значения в инпутах формы
 });
 

@@ -76,12 +76,12 @@ export const enableValidation = (validationConfig) => {
 //Функция очистки ошибок валидации
 export const clearValidation = (formElement, validationConfig) => {
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+// const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
 
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationConfig);
   });
 
-  buttonElement.disabled = true;
-  buttonElement.classList.add(validationConfig.inactiveButtonClass);
+//  buttonElement.disabled = true;
+//  buttonElement.classList.add(validationConfig.inactiveButtonClass);
 }
