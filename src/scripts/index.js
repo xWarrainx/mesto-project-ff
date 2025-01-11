@@ -115,9 +115,9 @@ profileAvatar.addEventListener('click', () => {
 formAvatar.addEventListener('submit', (evt) => {
     evt.preventDefault();
     changeButtonText(evt.target, "Сохранение...");
-    profileImageAvatar.setAttribute('style', `background-image: url(${avatarUrlInput.value});`);
     updateUserAvatar(avatarUrlInput)
-    .then(() => {
+    .then((res) => {
+        profileImageAvatar.setAttribute('style', `background-image: url(${res.avatar});`);
         closePopup(popupAvatar);
     })
     .catch((error) => {
@@ -166,11 +166,12 @@ formNewElement.addEventListener('submit', (evt) => {
           link: placelink.value
         }
         changeButtonText(evt.target, "Сохранение...");
-    createNewCard(newCard)
+        createNewCard(newCard)
     .then((dataCard) => {
         const cardElement = createCard(dataCard, like, showImage, userId, deleteCard);
         cardsContainer.prepend(cardElement);
         closePopup(popupAddCard);
+        evt.target.reset();     // сбрасываем значения в инпутах формы
     })
     .catch((error) => {
         console.error('Ошибка загрузки данных (данные новой карточки):', error);
@@ -178,7 +179,6 @@ formNewElement.addEventListener('submit', (evt) => {
     .finally(() => {
         changeButtonText(evt.target, "Сохранить");
     });
-    evt.target.reset();     // сбрасываем значения в инпутах формы
 });
 
 // Присваиваем popup класс popup_is-animated для анимации открытия
